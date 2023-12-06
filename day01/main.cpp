@@ -1,9 +1,9 @@
-#include <iostream>
-
+#include <filesystem>
 #include <fstream>
+#include <iostream>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #include <cassert>
 
@@ -34,13 +34,58 @@ std::string replaceAll(std::string str, const std::string &from, const std::stri
     return str;
 }
 
-std::string replaceAll(std::string str, const std::map<int, std::string> &map)
+void replaceAll(std::string &str, const std::map<int, std::string> &map)
 {
     size_t start_pos = 0;
-    for (auto substr : map)
+    bool did_something(false);
+    do
     {
+        did_something = false;
+        for (int i = 0; i < str.length(); i++)
+        {
+            for (const auto &digit : map)
+            {
+                if (str.substr(i, digit.second.length()) == digit.second)
+                {
+                    str.replace(i, digit.second.length(), std::to_string(digit.first));
+                    did_something = true;
+                    break;
+                }
+            }
+            
+            if (did_something)
+            {
+                continue;
+            }
+        }
+    } while (did_something);
+}
+
+void calculateFileValue(const std::string &filename, const std::map<int, std::string> &digits)
+{
+    auto lines = readLines(filename);
+    int value = 0;
+
+    for (auto line : lines)
+    {
+        auto original(line);
+
+        replaceAll(line, digits);
+        // std::cout << "l: " << original << " m: " << line << std::endl;
+
+        size_t pos1 = line.find_first_of("0123456789");
+        size_t pos2 = line.find_last_of("0123456789");
+
+        assert(pos1 != string::npos);
+        assert(pos2 != string::npos);
+
+        auto str_val = line.substr(pos1, 1) + line.substr(pos2, 1);
+        value += std::stoi(str_val);
+
+        std::cout << "l: " << original << " m: " << line << " v: " << str_val << std::endl;
     }
-    return str;
+
+    std::cout << filename << " - total: " << std::to_string(value) << std::endl;
 }
 
 int main()
@@ -58,31 +103,12 @@ int main()
             {9, "nine"},
         };
 
-    auto lines = readLines("input/sample.txt");
-    int value = 0;
+    const std::string directory = "input";
 
-    for (auto line : lines)
+    for (const auto &entry : std::filesystem::directory_iterator(directory))
     {
-        auto original(line);
-
-        for (auto &digit : digits)
-        {
-            line = replaceAll(line, digit.second, std::to_string(digit.first));
-        }
-
-        size_t pos1 = line.find_first_of("0123456789");
-        size_t pos2 = line.find_last_of("0123456789");
-
-        assert(pos1 != string::npos);
-        assert(pos2 != string::npos);
-
-        auto str_val = line.substr(pos1, 1) + line.substr(pos2, 1);
-        value += std::stoi(str_val);
-
-        std::cout << "l: " << original << " m: " << line << " v: " << str_val << std::endl;
+        calculateFileValue(entry.path(), digits);
     }
-
-    std::cout << "Total: " << std::to_string(value) << std::endl;
 
     return 0;
 }
