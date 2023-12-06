@@ -34,6 +34,18 @@ std::string replaceAll(std::string str, const std::string &from, const std::stri
     return str;
 }
 
+std::vector<std::string> splitString(const std::string &s, const std::string &delim)
+{
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s);
+    while (std::getline(tokenStream, token, delim[0]))
+    {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
 void replaceAll(std::string &str, const std::map<int, std::string> &map)
 {
     size_t start_pos = 0;
@@ -61,28 +73,31 @@ void replaceAll(std::string &str, const std::map<int, std::string> &map)
     } while (did_something);
 }
 
-void calculateFileValue(const std::string &filename, const std::map<int, std::string> &digits)
+void calculateFileValue(const std::string &filename)
 {
+    const std::map<int, std::string> digits =
+        {
+            {"blue", 14},
+            {"red", 12},
+            {"green", 13}};
+
     auto lines = readLines(filename);
     int value = 0;
     int count = 0;
 
-    for (auto line : lines)
+    for (auto const &line : lines)
     {
-        auto original(line);
+        size_t id_sep = line.find(':');
 
-        replaceAll(line, digits);
-        // std::cout << "l: " << original << " m: " << line << std::endl;
+        assert(id_sep != std::string::npos);
 
-        size_t pos1 = line.find_first_of("0123456789");
-        size_t pos2 = line.find_last_of("0123456789");
+        auto games = splitString(line.substr(id_sep + 1), ";");
 
-        assert(pos1 != string::npos);
-        assert(pos2 != string::npos);
+        assert(games.size() != 0);
 
-        auto str_val = line.substr(pos1, 1) + line.substr(pos2, 1);
-        value += std::stoi(str_val);
-        count++;
+        for (const auto &game : games)
+        {
+        }
 
         std::cout << "l: " << original << " m: " << line << " v: " << str_val << std::endl;
     }
@@ -92,19 +107,6 @@ void calculateFileValue(const std::string &filename, const std::map<int, std::st
 
 int main()
 {
-    std::map<int, std::string> digits =
-        {
-            {1, "one"},
-            {2, "two"},
-            {3, "three"},
-            {4, "four"},
-            {5, "five"},
-            {6, "six"},
-            {7, "seven"},
-            {8, "eight"},
-            {9, "nine"},
-        };
-
     const std::string directory = "input";
 
     for (const auto &entry : std::filesystem::directory_iterator(directory))
