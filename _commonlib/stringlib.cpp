@@ -11,6 +11,11 @@
 
 std::string adventlib::trim(const std::string &str)
 {
+    if(str.find_first_not_of(" ") == std::string::npos)
+    {
+        return "";
+    }
+
     return str.substr(str.find_first_not_of(" "), str.find_last_not_of(" ") - str.find_first_not_of(" ") + 1);
 }
 

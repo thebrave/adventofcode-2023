@@ -23,13 +23,14 @@ bool isSymbol(const vector<string> &lines, int x, int y)
     }
 
     const auto c = lines.at(y).at(x);
+    const bool res = c != '.' && !isdigit(c);
 
-    if (c != '.')
+    if (res)
     {
-        // cout << ">>>> " << lines.at(y).substr(x, 1) << endl;
+        // cout << "isSymbol: " << x << "," << y << ", " << lines.at(y).substr(x, 1) << endl;
     }
 
-    return c != '.';
+    return res;
 }
 
 bool any_true(const vector<string> &lines,
@@ -78,14 +79,16 @@ void calculateFileValue(const string &filename)
             // cout << ">>> row: " << lines.at(y).substr(x) << endl;
             if (isdigit(lines.at(y).at(x)))
             {
-                // cout << ">>> " << lines.at(y).substr(x, 1) << " is a digit" << endl;
+                // cout << ">>> " << x << "," << y << " - " << lines.at(y).substr(x, 1) << " is a digit" << endl;
 
                 int len = lines.at(y).substr(x).find_first_not_of("0123456789");
                 if (len == string::npos)
                 {
-                    cout << ">>> up to end of line" << endl;
+                    // cout << ">>> up to end of line" << endl;
                     len = lines.at(y).size() - 1;
                 }
+
+                assert(len > 0);
 
                 const string number = lines.at(y).substr(x, len);
 

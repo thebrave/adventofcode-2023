@@ -50,6 +50,7 @@
         "ctime": "cpp",
         "ratio": "cpp",
         "iomanip": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "set": "cpp"
     }
 }
