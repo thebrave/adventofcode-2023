@@ -33,3 +33,6 @@
 
 # VSCode
 build/
+
+# Idea
+cmake-build*/
