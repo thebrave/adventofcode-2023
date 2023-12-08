@@ -59,35 +59,66 @@ void calculateFileValue(const std::string &filename)
         worldMap[name] = {a, b};
     }
 
-    string current_position = "AAA";
+    list<string> current_positions;
+    for_each(worldMap.cbegin(), worldMap.cend(),
+             [&current_positions](const auto &entry)
+             {
+                 if (adventlib::endsWith(entry.first, "A"))
+                 {
+                     current_positions.push_back(entry.first);
+                 }
+             });
 
     auto iter = directions.cbegin();
-    int value = 0;
+    uint value = 0;
 
-    while (current_position != "ZZZ")
+    while (std::any_of(current_positions.cbegin(), current_positions.cend(), [](const string &p)
+                       { return !adventlib::endsWith(p, "Z"); }))
     {
-        assert(worldMap.count(current_position) > 0);
-        
-        if (*iter == 'L')
+        // cout << filename << " - total: " << std::to_string(value) << "Current positions: "
+        //      << to_string(std::count_if(current_positions.cbegin(), current_positions.cend(), [](const string &p)
+        //                                 { return !adventlib::endsWith(p, "Z"); }))
+        //      << endl;
+
+        // for_each(current_positions.begin(), current_positions.end(),
+        //          [](const auto &entry)
+        //          {
+        //              cout << " - Pos: " << entry << endl;
+        //          });
+
+        bool broken(false);
+        for (string &pos : current_positions)
         {
-            current_position = worldMap[current_position].first;
-        }
-        else if (*iter == 'R')
-        {
-            current_position = worldMap[current_position].second;
-        }
-        else
-        {
-            iter =directions.cbegin();
+            if (*iter == 'L')
+            {
+                pos = worldMap[pos].first;
+            }
+            else if (*iter == 'R')
+            {
+                pos = worldMap[pos].second;
+            }
+            else
+            {
+                broken = true;
+                assert(false);
+            }
         }
 
         ++value;
         ++iter;
-        if (iter == directions.cend())
+        if (iter == directions.cend() || broken)
         {
-            iter =directions.cbegin();
+            iter = directions.cbegin();
         }
     }
+
+    std::cout << filename << " - finished ?" << std::endl;
+
+    for_each(current_positions.begin(), current_positions.end(),
+             [](const auto &entry)
+             {
+                 cout << " - Pos: " << entry << endl;
+             });
 
     std::cout << filename << " - total: " << std::to_string(value) << std::endl;
 }
