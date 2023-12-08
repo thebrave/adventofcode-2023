@@ -88,7 +88,7 @@ void calculateFileValue(const std::string &filename)
 
 int main()
 {
-    const string directory = "/workspaces/adventofcode-2023/day04/input";
+    const string directory = "/workspaces/adventofcode-2023/day05/input";
 
     for (const auto &entry : filesystem::directory_iterator(directory))
     {

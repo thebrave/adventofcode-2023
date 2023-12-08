@@ -23,17 +23,6 @@ std::vector<std::string> readLines(const std::string &filename)
     return lines;
 }
 
-std::string replaceAll(std::string str, const std::string &from, const std::string &to)
-{
-    size_t start_pos = 0;
-    while ((start_pos = str.find(from, start_pos)) != std::string::npos)
-    {
-        str.replace(start_pos, from.length(), to);
-        start_pos += to.length();
-    }
-    return str;
-}
-
 void replaceAll(std::string &str, const std::map<int, std::string> &map)
 {
     size_t start_pos = 0;
@@ -61,8 +50,21 @@ void replaceAll(std::string &str, const std::map<int, std::string> &map)
     } while (did_something);
 }
 
-void calculateFileValue(const std::string &filename, const std::map<int, std::string> &digits)
+void calculateFileValue(const std::string &filename)
 {
+    const std::map<int, std::string> digits =
+        {
+            {1, "one"},
+            {2, "two"},
+            {3, "three"},
+            {4, "four"},
+            {5, "five"},
+            {6, "six"},
+            {7, "seven"},
+            {8, "eight"},
+            {9, "nine"},
+        };
+        
     auto lines = readLines(filename);
     int value = 0;
     int count = 0;
@@ -92,24 +94,11 @@ void calculateFileValue(const std::string &filename, const std::map<int, std::st
 
 int main()
 {
-    std::map<int, std::string> digits =
-        {
-            {1, "one"},
-            {2, "two"},
-            {3, "three"},
-            {4, "four"},
-            {5, "five"},
-            {6, "six"},
-            {7, "seven"},
-            {8, "eight"},
-            {9, "nine"},
-        };
-
-    const std::string directory = "input";
+    const std::string directory = "/workspaces/adventofcode-2023/day01/input";
 
     for (const auto &entry : std::filesystem::directory_iterator(directory))
     {
-        calculateFileValue(entry.path(), digits);
+        calculateFileValue(entry.path());
     }
 
     return 0;

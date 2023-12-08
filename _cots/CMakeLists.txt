@@ -1,0 +1,2 @@
+unset(CMAKE_CXX_INCLUDE_WHAT_YOU_USE)
+add_subdirectory(Catch2)
